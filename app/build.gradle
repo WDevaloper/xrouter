@@ -46,6 +46,6 @@ dependencies {
     androidTestImplementation libs.espresso.core
     implementation project(':core')
     annotationProcessor project(':compiler')
-    implementation project(':XRouter')
+    implementation project(':xrouter')
 
 }

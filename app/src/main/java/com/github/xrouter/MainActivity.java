@@ -2,6 +2,7 @@ package com.github.xrouter;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,8 +10,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.github.core.RouterService;
 import com.github.core.annotation.Route;
 import com.github.xrouter.interceptor.RouteInterceptor;
+
+import javax.annotation.Nullable;
 
 @Route(path = "/app/main", group = "Main")
 public class MainActivity extends AppCompatActivity {
@@ -27,8 +31,25 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void jumpPage(View view) {
+        boolean result = isResult();
+        Log.e("TAG", "onCreate: " + result);
+    }
+
+    private boolean isResult() {
+        // 创建路由请求
+        RouteRequest request = new RouteRequest("/app/main", "Main");
+        request.putParam("key", "value");
+
+        Router router = new Router(this);
+
+        MainService mainService = router.getService("/app/main", null, null);
+        Log.e("TAG", "mainService: " + mainService);
+
         // 添加拦截器
-        Router.getInstance().addInterceptor(new RouteInterceptor() {
+        router.addInterceptor(new RouteInterceptor() {
             @Override
             public boolean intercept(RouteRequest request) {
                 // 这里可以进行权限验证等操作
@@ -37,12 +58,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 创建路由请求
-        RouteRequest request = new RouteRequest("/app/service", "app");
-        request.putParam("key", "value");
 
         // 进行路由跳转
-        boolean result = Router.getInstance().navigate(request);
-        Log.e("TAG", "onCreate: " + result);
+        boolean result = router.navigate(request);
+        return result;
     }
+
+
 }

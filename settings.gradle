@@ -23,4 +23,4 @@ rootProject.name = "XRouter"
 include ':app'
 include ':compiler'
 include ':core'
-include ':XRouter'
+include ':xrouter'

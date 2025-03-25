@@ -2,6 +2,7 @@ package com.github.xrouter.apt;
 
 import com.github.core.RouteTable;
 import com.github.core.annotation.Route;
+import com.github.core.annotation.RouterUri;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
@@ -17,7 +18,6 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -56,6 +56,7 @@ public class RouteProcessor extends AbstractProcessor {
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> annotations = new HashSet<>();
         annotations.add(Route.class.getCanonicalName());
+        annotations.add(RouterUri.class.getCanonicalName());
         return annotations;
     }
 
@@ -64,11 +65,14 @@ public class RouteProcessor extends AbstractProcessor {
         if (annotations.isEmpty()) {
             return false;
         }
-        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Route.class);
+        Set<? extends Element> routeElements = roundEnv.getElementsAnnotatedWith(Route.class);
+        Set<? extends Element> uriElements = roundEnv.getElementsAnnotatedWith(RouterUri.class);
+
         Map<String, Map<String, ClassName>> groupRouteMap = new HashMap<>();
         String packageName = null;
 
-        for (Element element : elements) {
+        // 处理 @Route 注解
+        for (Element element : routeElements) {
             TypeElement typeElement = (TypeElement) element;
             if (packageName == null) {
                 packageName = elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
@@ -82,6 +86,20 @@ public class RouteProcessor extends AbstractProcessor {
                 groupRouteMap.put(group, new HashMap<>());
             }
             groupRouteMap.get(group).put(path, className);
+        }
+
+        // 处理 @RouterUri 注解
+        for (Element element : uriElements) {
+            TypeElement typeElement = (TypeElement) element;
+            RouterUri uri = typeElement.getAnnotation(RouterUri.class);
+            String uriValue = uri.uri();
+            String group = "uri_group"; // 可以根据需要修改分组逻辑
+            ClassName className = ClassName.get(typeElement);
+
+            if (!groupRouteMap.containsKey(group)) {
+                groupRouteMap.put(group, new HashMap<>());
+            }
+            groupRouteMap.get(group).put(uriValue, className);
         }
 
         if (packageName != null && moduleName != null) {
