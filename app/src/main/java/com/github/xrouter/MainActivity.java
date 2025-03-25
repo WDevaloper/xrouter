@@ -10,11 +10,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.github.core.annotation.Route;
-import com.github.core.RouteTable;
+import com.github.xrouter.interceptor.RouteInterceptor;
 
-import java.util.ServiceLoader;
-
-@Route(path = "/app/main")
+@Route(path = "/app/main", group = "Main")
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -29,10 +27,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        ServiceLoader.load(RouteTable.class).forEach(table -> {
-            table.getRouteMap().forEach((path, clazz) -> {
-                Log.e("TAG", "path: " + path + ", clazz: " + clazz);
-            });
+        // 添加拦截器
+        Router.getInstance().addInterceptor(new RouteInterceptor() {
+            @Override
+            public boolean intercept(RouteRequest request) {
+                // 这里可以进行权限验证等操作
+                Log.e("TAG", "intercept: 这里可以进行权限验证等操作");
+                return false;
+            }
         });
+
+        // 创建路由请求
+        RouteRequest request = new RouteRequest("/app/service", "app");
+        request.putParam("key", "value");
+
+        // 进行路由跳转
+        boolean result = Router.getInstance().navigate(request);
+        Log.e("TAG", "onCreate: " + result);
     }
 }
