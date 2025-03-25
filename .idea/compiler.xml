@@ -20,6 +20,8 @@
         <module name="XRouter.compiler.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="11" />
+    <bytecodeTargetLevel target="11">
+      <module name="XRouter.mylibrary" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>

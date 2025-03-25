@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.github.xrouter'
+    namespace 'com.github.order'
     compileSdk 35
 
     defaultConfig {
@@ -11,6 +11,12 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.name]
+            }
+        }
     }
 
     buildTypes {
@@ -26,7 +32,14 @@ android {
 }
 
 dependencies {
-    api libs.auto.service
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation project(':provider')
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
     implementation project(':core')
-    implementation libs.gson
+    annotationProcessor project(':compiler')
+    implementation project(':xrouter')
 }

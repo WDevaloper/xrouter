@@ -12,6 +12,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.github.core.RouterService;
 import com.github.core.annotation.Route;
+import com.github.provider.OrderService;
+import com.github.provider.UserService;
 import com.github.xrouter.interceptor.RouteInterceptor;
 
 import javax.annotation.Nullable;
@@ -45,8 +47,17 @@ public class MainActivity extends AppCompatActivity {
 
         Router router = new Router(this);
 
-        MainService mainService = router.getService("/app/main", null, null);
+        IMainService mainService =
+                router.getService("/app/main", null, null);
         Log.e("TAG", "mainService: " + mainService);
+
+        UserService userService =
+                router.getService("/user/user", null, null);
+        Log.e("TAG", "userService: " + userService);
+
+        OrderService orderService =
+                router.getService("/order/order", null, null);
+        Log.e("TAG", "orderService: " + orderService);
 
         // 添加拦截器
         router.addInterceptor(new RouteInterceptor() {

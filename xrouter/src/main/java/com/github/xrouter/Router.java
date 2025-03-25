@@ -2,6 +2,7 @@ package com.github.xrouter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.github.core.RouteTable;
 import com.github.core.RouterService;
@@ -117,7 +118,10 @@ public class Router {
                             Object[] initArgs) {
         ServiceLoader<RouterService> serviceLoader = ServiceLoader.load(RouterService.class);
         for (RouterService manager : serviceLoader) {
-            return  manager.newServiceInstance(path, parameterTypes, initArgs);
+            T instance = manager.newServiceInstance(path, parameterTypes, initArgs);
+            if (instance != null) {
+                return instance;
+            }
         }
         return null;
     }
