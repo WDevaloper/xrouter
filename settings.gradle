@@ -21,7 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "XRouter"
 include ':app'
-include ':mylibrary'
 include ':compiler'
 include ':core'
 include ':XRouter'
